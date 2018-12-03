@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "easy-peasy": "christianchown/easy-peasy.git#93bf5191",
+    "easy-peasy": "christianchown/easy-peasy.git#7f1aad3b",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2"
   },
