@@ -3091,9 +3091,9 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-easy-peasy@christianchown/easy-peasy.git#0a09daca:
+easy-peasy@christianchown/easy-peasy.git#93bf5191:
   version "1.6.1"
-  resolved "https://codeload.github.com/christianchown/easy-peasy/tar.gz/0a09dacae996853f290528f9f1ede509bab3016c"
+  resolved "https://codeload.github.com/christianchown/easy-peasy/tar.gz/93bf519146e06cafa289e21d0a7cdf3b423957e5"
   dependencies:
     immer "^1.7.4"
     memoize-one "^4.0.3"
