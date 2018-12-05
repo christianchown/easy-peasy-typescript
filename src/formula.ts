@@ -108,7 +108,7 @@ export const Store = createStore<Model>({
     const results = await login(credentials);
     dispatch._handleLogin(results);
   }),
-  logout: (state: any) => {
+  logout: state => {
     clearLoginData();
     return {
       ...state,

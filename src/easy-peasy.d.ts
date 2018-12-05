@@ -7,10 +7,6 @@ declare module "easy-peasy" {
     [K in keyof T]: T[K] extends Function ? K : never
   }[keyof T];
   type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
-  type NonFunctionPropertyNames<T> = {
-    [K in keyof T]: T[K] extends Function ? never : K
-  }[keyof T];
-  type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
   type ObjectPropertyNames<T> = {
     [K in keyof T]: T[K] extends Function
       ? never
@@ -37,9 +33,7 @@ declare module "easy-peasy" {
   type FunctionWithoutFirstParam<F> = IsMoreThanOneParam<F> extends Function
     ? (payload: Param1<F>) => void
     : () => void;
-  type FunctionsWithoutFirstParam<T> = {
-    [k in keyof T]: FunctionWithoutFirstParam<T[k]>
-  };
+
   type ActionPrimitive = number | string | boolean | null | symbol;
   type ActionFunction<ActionPayload = any> = ActionPayload extends
     | undefined
@@ -92,7 +86,6 @@ declare module "easy-peasy" {
   };
 
   type L0Values<T> = NonObjectProperties<T>;
-  type L0Objects<T> = ObjectProperties<T>;
   type L1Values<T> = {
     [k in keyof ObjectProperties<T>]: NonObjectProperties<
       ObjectProperties<T>[k]
@@ -180,9 +173,7 @@ declare module "easy-peasy" {
     >
   };
 
-  type L0Actions<T> = FunctionsWithoutFirstParam<
-    NonReducerFunctionProperties<T>
-  >;
+  type L0Actions<T> = FunctionsWithoutFirst<NonReducerFunctionProperties<T>>;
   type L1Actions<T> = {
     [k in keyof ObjectProperties<T>]: FunctionsWithoutFirst<
       ObjectProperties<T>[k]
