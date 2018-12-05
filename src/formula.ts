@@ -66,10 +66,10 @@ interface ModelActionShape {
 
   // Actions
   login: Effect<Model, LoginCredentials>;
-  logout: Action<ModelShape, void>;
+  logout: Action<ModelShape & ModelSelector, void>;
 
   // Events
-  _handleLogin: Action<ModelShape, LoginResponse>;
+  _handleLogin: Action<ModelShape & ModelSelector, LoginResponse>;
 }
 
 type Model = ModelShape & ModelActionShape;
@@ -95,7 +95,7 @@ function clearLoginData() {
   // empty
 }
 
-export const Store = createStore({
+export const Store = createStore<Model>({
   ready: false,
   logoBaseUrl: "",
 
@@ -115,7 +115,7 @@ export const Store = createStore({
   isAuthenticated: select(s => !!s.user.id),
   login: effect(async (dispatch, credentials) => {
     const results = await login(credentials);
-    (dispatch as any)._handleLogin(results);
+    dispatch(dispatch as any)._handleLogin(results);
   }),
   logout: (state: any) => {
     clearLoginData();
@@ -127,7 +127,7 @@ export const Store = createStore({
     };
   },
 
-  _handleLogin: (state: Model, p: LoginResponse) => {
+  _handleLogin: (state: ModelShape, p: LoginResponse) => {
     if (p.isError) {
     } else {
       // Update state
