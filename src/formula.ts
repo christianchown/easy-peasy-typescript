@@ -4,10 +4,7 @@ import {
   createStore,
   Select,
   Effect,
-  Action,
-  ModelActions,
-  ModelValues,
-  Dispatch
+  Action
 } from "easy-peasy";
 import { delay } from "./toDoService";
 
@@ -74,12 +71,6 @@ interface ModelActionShape {
 
 type Model = ModelShape & ModelActionShape;
 
-type MV = ModelValues<Model>;
-type MA = ModelActions<Model>;
-type D = Dispatch<Model>;
-
-export function s(mv: MV, ma: MA, d: D) {}
-
 async function login(credentials: LoginCredentials): Promise<LoginResponse> {
   await delay(100);
   return {
@@ -115,7 +106,7 @@ export const Store = createStore<Model>({
   isAuthenticated: select(s => !!s.user.id),
   login: effect(async (dispatch, credentials) => {
     const results = await login(credentials);
-    dispatch(dispatch as any)._handleLogin(results);
+    dispatch._handleLogin(results);
   }),
   logout: (state: any) => {
     clearLoginData();
