@@ -33,12 +33,26 @@ type ActionFunction<ActionPayload = any> = ActionPayload extends
   : ActionPayload;
 
 // given a model, get the state shapes of any reducer(...)s
+type ReducerPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Reducer<any>
+    ? FunctionReturnType<T[K]> extends void
+      ? never
+      : K
+    : never
+}[keyof T];
+type ReducerProperties<T> = Pick<T, ReducerPropertyNames<T>>;
 type FunctionReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
-type ReducerStateShapes<Model> = {
-  [K in keyof FunctionProperties<Model>]: FunctionReturnType<
-    FunctionProperties<Model>[K]
-  >
+type ReducerStateShapes<T> = {
+  [K in keyof ReducerProperties<T>]: FunctionReturnType<ReducerProperties<T>[K]>
 };
+
+type NonReducerFunctionProperties<T> = Pick<
+  T,
+  Exclude<
+    Exclude<FunctionPropertyNames<T>, ReducerPropertyNames<T>>,
+    SelectPropertyNames<T>
+  >
+>;
 
 // given a model, get the value types of any select(...)s
 type SelectPropertyNames<T> = {
@@ -130,27 +144,59 @@ export type Select<StateValues, ResultantType> = (
   dependencies?: Array<(state: any) => any>
 ) => never;
 
+interface Vals0 {
+  s0: string;
+  n0: number;
+}
+
+interface Vals1 {
+  s1: string;
+  n1: number;
+}
+
+interface Vals2 {
+  s2: string;
+  n2: number;
+}
+
+interface Vals3 {
+  s3: string;
+  n3: number;
+}
+
 interface State {
   s0: string;
   n0: number;
   f0: (p00: string, p01: number) => void;
+  sel0: Select<Vals0, boolean>;
+  e0: Effect<State, string>;
+  r0: Reducer<Vals0>;
 
   level1: {
     s1: string;
     n1: number;
+    sel1: Select<Vals1, boolean>;
     f1: (p10: string, p11: number) => void;
     f12: () => void;
     f13: (p3: boolean) => void;
+    e1: Effect<State, string>;
+    r1: Reducer<Vals1>;
 
     level2: {
       s2: string;
       n2: number;
+      sel2: Select<Vals2, boolean>;
       f2: (p20: string, p21: number) => void;
+      e2: Effect<State, string>;
+      r2: Reducer<Vals2>;
 
       level3: {
         s3: string;
         n3: number;
+        sel3: Select<Vals3, boolean>;
         f3: (p30: string, p31: number) => void;
+        e3: Effect<State, string>;
+        r3: Reducer<Vals3>;
       };
     };
   };
@@ -255,12 +301,14 @@ type L4Functions<T> = {
 };
 
 type FunctionsWithoutFirst<T> = {
-  [k in keyof FunctionProperties<T>]: FunctionWithoutFirstParam<
-    FunctionProperties<T>[k]
+  [k in keyof NonReducerFunctionProperties<T>]: FunctionWithoutFirstParam<
+    NonReducerFunctionProperties<T>[k]
   >
 };
 
-type L0FunctionsWithout<T> = FunctionsWithoutFirstParam<FunctionProperties<T>>;
+type L0FunctionsWithout<T> = FunctionsWithoutFirstParam<
+  NonReducerFunctionProperties<T>
+>;
 type L1FunctionsWithout<T> = {
   [k in keyof ObjectProperties<T>]: FunctionsWithoutFirst<
     ObjectProperties<T>[k]
@@ -302,6 +350,86 @@ type L4FunctionsWithout<T> = {
   }
 };
 
+type L0SelectValues<T> = SelectPropertyTypes<T>;
+type L1SelectValues<T> = {
+  [k in keyof ObjectProperties<T>]: SelectPropertyTypes<ObjectProperties<T>[k]>
+};
+type L2SelectValues<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: SelectPropertyTypes<
+      ObjectProperties<ObjectProperties<T>[k]>[l]
+    >
+  }
+};
+type L3SelectValues<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
+      [m in keyof ObjectProperties<
+        ObjectProperties<ObjectProperties<T>[k]>[l]
+      >]: SelectPropertyTypes<
+        ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+      >
+    }
+  }
+};
+type L4SelectValues<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
+      [m in keyof ObjectProperties<
+        ObjectProperties<ObjectProperties<T>[k]>[l]
+      >]: {
+        [n in keyof ObjectProperties<
+          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+        >]: SelectPropertyTypes<
+          ObjectProperties<
+            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+          >[n]
+        >
+      }
+    }
+  }
+};
+
+type L0ReducerShapes<T> = ReducerStateShapes<T>;
+type L1ReducerShapes<T> = {
+  [k in keyof ObjectProperties<T>]: ReducerStateShapes<ObjectProperties<T>[k]>
+};
+type L2ReducerShapes<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: ReducerStateShapes<
+      ObjectProperties<ObjectProperties<T>[k]>[l]
+    >
+  }
+};
+type L3ReducerShapes<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
+      [m in keyof ObjectProperties<
+        ObjectProperties<ObjectProperties<T>[k]>[l]
+      >]: ReducerStateShapes<
+        ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+      >
+    }
+  }
+};
+type L4ReducerShapes<T> = {
+  [k in keyof ObjectProperties<T>]: {
+    [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
+      [m in keyof ObjectProperties<
+        ObjectProperties<ObjectProperties<T>[k]>[l]
+      >]: {
+        [n in keyof ObjectProperties<
+          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+        >]: ReducerStateShapes<
+          ObjectProperties<
+            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+          >[n]
+        >
+      }
+    }
+  }
+};
+
 type MutableValues<T> = L0Values<T> &
   L1Values<T> &
   L2Values<T> &
@@ -317,6 +445,18 @@ type FunctionsWithout<T> = L0FunctionsWithout<T> &
   L2FunctionsWithout<T> &
   L3FunctionsWithout<T> &
   L4FunctionsWithout<T>;
+type SelectValues<T> = L0SelectValues<T> &
+  L1SelectValues<T> &
+  L2SelectValues<T> &
+  L3SelectValues<T> &
+  L4SelectValues<T>;
+type ReducerShapes<T> = L0ReducerShapes<T> &
+  L1ReducerShapes<T> &
+  L2ReducerShapes<T> &
+  L3ReducerShapes<T> &
+  L4ReducerShapes<T>;
+type Values<T> = MutableValues<T> & SelectValues<T> & ReducerShapes<T>;
+type Actions<T> = FunctionsWithout<T>;
 
 type NoParams = () => void;
 type OneParam = (param: number) => void;
@@ -330,4 +470,6 @@ type NoParam2 = FunctionWithoutFirstParam<NoParams>;
 type OneParam2 = FunctionWithoutFirstParam<OneParam>;
 type TwoParams2 = FunctionWithoutFirstParam<TwoParams>;
 
-export function a(l: FunctionsWithout<State>) {}
+export function a(l: Actions<State>) {
+  l.level1.
+}
