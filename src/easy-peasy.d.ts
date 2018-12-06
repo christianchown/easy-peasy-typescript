@@ -290,7 +290,9 @@ declare module "easy-peasy" {
     ReducerShapes<T>;
 
   // easy-peasy's decorated Redux dispatch() (e.g. dispatch.todos.insert(item); )
-  type Dispatch<Model = any> = Redux.Dispatch & ModelActions<Model>;
+  type Dispatch<Model = any> = Model extends Redux.Action
+    ? Redux.Dispatch<Model>
+    : Redux.Dispatch & ModelActions<Model>;
 
   /**
    * https://github.com/ctrlplusb/easy-peasy#createstoremodel-config
@@ -375,10 +377,11 @@ declare module "easy-peasy" {
    * })
    */
 
-  type EffectAction<Model, PayloadType, EffectResult> = (
-    dispatch: Dispatch<PayloadType>,
-    payload: undefined,
-    getState: () => Readonly<ModelValues<Model>>
+  type EffectAction<Model, Payload, EffectResult> = (
+    dispatch: Dispatch<Model>,
+    payload: Payload,
+    getState: () => Readonly<ModelValues<Model>>,
+    injections: any
   ) => EffectResult;
 
   type Effect<
@@ -396,11 +399,7 @@ declare module "easy-peasy" {
       ) => EffectResult;
 
   function effect<Model = any, Payload = never, EffectResult = any>(
-    effectAction: (
-      dispatch: Dispatch<Model>,
-      payload: Payload,
-      getState: () => Readonly<ModelValues<Model>>
-    ) => EffectResult
+    effectAction: EffectAction<Model, Payload, EffectResult>
   ): Effect<Model, Payload, EffectResult>;
 
   /**
