@@ -375,25 +375,23 @@ declare module "easy-peasy" {
    * })
    */
 
+  type EffectAction<Model, PayloadType, EffectResult> = (
+    dispatch: Dispatch<PayloadType>,
+    payload: undefined,
+    getState: () => Readonly<ModelValues<Model>>
+  ) => EffectResult;
+
   type Effect<
     Model,
     Payload = undefined,
     EffectResult = any
   > = Payload extends undefined
     ? (
-        effectAction: (
-          dispatch: Dispatch<Model>,
-          payload: undefined,
-          getState: () => Readonly<ModelValues<Model>>
-        ) => EffectResult,
+        effectAction: EffectAction<Model, Payload, EffectResult>,
         b?: undefined
       ) => EffectResult
     : (
-        effectAction: (
-          dispatch: Dispatch<Model>,
-          payload: Payload,
-          getState: () => Readonly<ModelValues<Model>>
-        ) => EffectResult,
+        effectAction: EffectAction<Model, Payload, EffectResult>,
         b: Payload
       ) => EffectResult;
 
