@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "easy-peasy": "christianchown/easy-peasy.git#93bf5191",
+    "easy-peasy": "^1.6.1",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2"
   },
@@ -21,8 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "postinstall": "cd node_modules/easy-peasy&&yarn&&yarn prepublish&&rimraf node_modules"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

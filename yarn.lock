@@ -3091,16 +3091,16 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-easy-peasy@christianchown/easy-peasy.git#93bf5191:
+easy-peasy@^1.6.1:
   version "1.6.1"
-  resolved "https://codeload.github.com/christianchown/easy-peasy/tar.gz/93bf519146e06cafa289e21d0a7cdf3b423957e5"
+  resolved "https://registry.yarnpkg.com/easy-peasy/-/easy-peasy-1.6.1.tgz#aa0cfc8bda3d9648b3ecfea303b9017a6bb3de6d"
+  integrity sha512-SCuOCYVsv07OHkJspVs1XhK3JgzSKWIS8TzFMPxIXKD/wxMFL6JsvlLHXEzmHwbDbB73/xj17htxldQdxG1btg==
   dependencies:
     immer "^1.7.4"
     memoize-one "^4.0.3"
     redux "^4.0.1"
     redux-thunk "^2.3.0"
     shallowequal "^1.1.0"
-    type-zoo "^3.2.1"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
