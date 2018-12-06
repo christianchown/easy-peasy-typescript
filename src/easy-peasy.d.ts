@@ -381,7 +381,11 @@ declare module "easy-peasy" {
     dispatch: Dispatch<Model>,
     payload: Payload,
     getState: () => Readonly<ModelValues<Model>>,
-    injections: any
+    injections: any,
+    meta: {
+      parent: Array<string>,
+      path: Array<string>
+    }
   ) => EffectResult;
 
   type Effect<
