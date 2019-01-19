@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore, useAction, ModelValues, Dispatch } from 'easy-peasy';
 import store, { Model } from './store';
 
-export default function ToDoComponent(d: Dispatch<Model>) {
+export default function ToDoComponent() {
   const num = useStore((state: ModelValues<Model>) => state.todos.lengthOfItems);
   const deeper = useStore((state: ModelValues<Model>) => state.todos.deep.deeper.deeperValue);
   const deeperInc = useAction((dispatch: Dispatch<Model>) => dispatch.todos.deep.deeper.incrementDeeperValue);

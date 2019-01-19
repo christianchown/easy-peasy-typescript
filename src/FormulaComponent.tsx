@@ -1,14 +1,14 @@
 import React from 'react';
-import { StoreProvider, useAction, useStore, Dispatch } from 'easy-peasy';
+import { StoreProvider, useAction, useStore, Dispatch, ModelValues } from 'easy-peasy';
 import { Store, Model } from './formula';
 
 type ActFunction = (acting: { id: string }) => void;
 
 function UsesFormula() {
   const act = useAction((dispatch: Dispatch<Model>) => dispatch.login);
-  const isLoggedIn = useStore(state => state.isAuthenticated);
-  const deepValue = useStore(state => state.deep1.deep2.deepValue);
-  const toggle: any = useAction((dispatch: Dispatch<Model>) => dispatch.deep1.deep2.toggle);
+  const isLoggedIn = useStore((state: ModelValues<Model>) => state.isAuthenticated);
+  const deepValue = useStore((state: ModelValues<Model>) => state.deep1.deep2.deepValue);
+  const toggle = useAction((dispatch: Dispatch<Model>) => dispatch.deep1.deep2.toggle);
   return (
     <>
       <p>isLoggedIn = {isLoggedIn}</p>

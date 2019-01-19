@@ -24,12 +24,6 @@ declare module 'easy-peasy' {
     ? (payload: Param1<F>) => void
     : () => void;
 
-  type ActionPrimitive = number | string | boolean | null | symbol;
-  type ActionFunction<ActionPayload = any> = ActionPayload extends undefined | void
-    ? () => void
-    : ActionPayload extends ActionPrimitive | Array<ActionPrimitive>
-    ? (payload: ActionPayload) => void
-    : ActionPayload;
   type EffectResult<Result> = Result extends Promise<any> ? Result : Promise<Result>;
 
   // given a model slice, get the state shapes of any reducer(...)s
@@ -373,7 +367,7 @@ declare module 'easy-peasy' {
    */
 
   function useStore<Model = any, StateValue = any>(
-    mapState: (state: ModelValues<Model>) => StateValue,
+    mapState: <State extends ModelValues<Model>>(state: State) => StateValue,
     externals?: Array<any>,
   ): StateValue;
 
@@ -395,5 +389,5 @@ declare module 'easy-peasy' {
 
   function useAction<Model, ActionPayload = any>(
     mapAction: (dispatch: Dispatch<Model>) => ActionPayload,
-  ): ActionFunction<ActionPayload>;
+  ): ActionPayload;
 }
