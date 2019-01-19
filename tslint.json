@@ -24,6 +24,7 @@
     "no-submodule-imports": false,
     "no-this-assignment": [true, {"allow-destructuring": true}],
     "member-access": [true, "no-public"],
+    "ban-types": false,
     "no-console": false,
     "no-debugger": false
   }

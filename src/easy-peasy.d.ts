@@ -27,89 +27,98 @@ declare module 'easy-peasy' {
   type EffectResult<Result> = Result extends Promise<any> ? Result : Promise<Result>;
 
   // given a model slice, get the state shapes of any reducer(...)s
-  type ReducerPropertyNames<T> = {
-    [K in keyof T]: T[K] extends (state: infer S, action: Redux.Action<any>) => infer S ? K : never
-  }[keyof T];
-  type ReducerProperties<T> = Pick<T, ReducerPropertyNames<T>>;
   type FunctionReturnType<T> = T extends (...args: Array<any>) => infer R ? R : any;
-  type ReducerStateShapes<T> = { [K in keyof ReducerProperties<T>]: FunctionReturnType<ReducerProperties<T>[K]> };
+  type ReducerPropertyNames<ModelSlice> = {
+    [K in keyof ModelSlice]: ModelSlice[K] extends (state: infer S, action: Redux.Action<any>) => infer S ? K : never
+  }[keyof ModelSlice];
+  type ReducerProperties<ModelSlice> = Pick<ModelSlice, ReducerPropertyNames<ModelSlice>>;
+  type ReducerStateShapes<ModelSlice> = {
+    [K in keyof ReducerProperties<ModelSlice>]: FunctionReturnType<ReducerProperties<ModelSlice>[K]>
+  };
 
   // all non-select(...) non-reducer(....) functions in a model slice
-  type NonReducerFunctionProperties<T> = Pick<
-    T,
-    Exclude<Exclude<FunctionPropertyNames<T>, ReducerPropertyNames<T>>, SelectPropertyNames<T>>
+  type NonReducerFunctionProperties<ModelSlice> = Pick<
+    ModelSlice,
+    Exclude<
+      Exclude<FunctionPropertyNames<ModelSlice>, ReducerPropertyNames<ModelSlice>>,
+      SelectPropertyNames<ModelSlice>
+    >
   >;
 
   // given a model slice, get the value types of any select(...)s
-  type SelectPropertyNames<T> = { [K in keyof T]: T[K] extends Select<any, any> ? K : never }[keyof T];
-  type SelectProperties<T> = Pick<T, SelectPropertyNames<T>>;
-  type SelectPropertyTypes<T> = {
-    [K in keyof SelectProperties<T>]: SelectProperties<T>[K] extends Select<any, infer R> ? R : never
+  type SelectPropertyNames<ModelSlice> = {
+    [K in keyof ModelSlice]: ModelSlice[K] extends Select<any, any> ? K : never
+  }[keyof ModelSlice];
+  type SelectProperties<ModelSlice> = Pick<ModelSlice, SelectPropertyNames<ModelSlice>>;
+  type SelectPropertyTypes<ModelSlice> = {
+    [K in keyof SelectProperties<ModelSlice>]: SelectProperties<ModelSlice>[K] extends Select<any, infer R> ? R : never
   };
   type SelectValueTypes<Model> = { [K in keyof Model]: SelectPropertyTypes<Model[K]> };
 
   // extract (for  4 levels) all non-function properties from a Model
-  type L0Values<T> = NonObjectProperties<T>;
-  type L1Values<T> = { [k in keyof ObjectProperties<T>]: NonObjectProperties<ObjectProperties<T>[k]> };
-  type L2Values<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: NonObjectProperties<
-        ObjectProperties<ObjectProperties<T>[k]>[l]
+  type L0Values<Model> = NonObjectProperties<Model>;
+  type L1Values<Model> = { [k in keyof ObjectProperties<Model>]: NonObjectProperties<ObjectProperties<Model>[k]> };
+  type L2Values<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: NonObjectProperties<
+        ObjectProperties<ObjectProperties<Model>[k]>[l]
       >
     }
   };
-  type L3Values<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: NonObjectProperties<
-          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+  type L3Values<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: NonObjectProperties<
+          ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
         >
       }
     }
   };
-  type L4Values<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: {
+  type L4Values<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: {
           [n in keyof ObjectProperties<
-            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
-          >]: NonObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]>[n]>
+            ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
+          >]: NonObjectProperties<
+            ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]>[n]
+          >
         }
       }
     }
   };
 
-  type FunctionsWithoutFirst<T> = {
-    [k in keyof NonReducerFunctionProperties<T>]: FunctionWithoutFirstParam<NonReducerFunctionProperties<T>[k]>
+  type FunctionsWithoutFirst<Model> = {
+    [k in keyof NonReducerFunctionProperties<Model>]: FunctionWithoutFirstParam<NonReducerFunctionProperties<Model>[k]>
   };
 
   // extract (for  4 levels) all non-reducer(), non-select() function properties from a Model, removing the first parameter
-  type L0Actions<T> = FunctionsWithoutFirst<NonReducerFunctionProperties<T>>;
-  type L1Actions<T> = { [k in keyof ObjectProperties<T>]: FunctionsWithoutFirst<ObjectProperties<T>[k]> };
-  type L2Actions<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: FunctionsWithoutFirst<
-        ObjectProperties<ObjectProperties<T>[k]>[l]
+  type L0Actions<Model> = FunctionsWithoutFirst<NonReducerFunctionProperties<Model>>;
+  type L1Actions<Model> = { [k in keyof ObjectProperties<Model>]: FunctionsWithoutFirst<ObjectProperties<Model>[k]> };
+  type L2Actions<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: FunctionsWithoutFirst<
+        ObjectProperties<ObjectProperties<Model>[k]>[l]
       >
     }
   };
-  type L3Actions<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: FunctionsWithoutFirst<
-          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+  type L3Actions<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: FunctionsWithoutFirst<
+          ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
         >
       }
     }
   };
-  type L4Actions<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: {
+  type L4Actions<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: {
           [n in keyof ObjectProperties<
-            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+            ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
           >]: FunctionsWithoutFirst<
-            ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]>[n]
+            ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]>[n]
           >
         }
       }
@@ -117,84 +126,106 @@ declare module 'easy-peasy' {
   };
 
   // extract (for  4 levels) all select() result types from a Model
-  type L0SelectValues<T> = SelectPropertyTypes<T>;
-  type L1SelectValues<T> = { [k in keyof ObjectProperties<T>]: SelectPropertyTypes<ObjectProperties<T>[k]> };
-  type L2SelectValues<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: SelectPropertyTypes<
-        ObjectProperties<ObjectProperties<T>[k]>[l]
+  type L0SelectValues<Model> = SelectPropertyTypes<Model>;
+  type L1SelectValues<Model> = {
+    [k in keyof ObjectProperties<Model>]: SelectPropertyTypes<ObjectProperties<Model>[k]>
+  };
+  type L2SelectValues<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: SelectPropertyTypes<
+        ObjectProperties<ObjectProperties<Model>[k]>[l]
       >
     }
   };
-  type L3SelectValues<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: SelectPropertyTypes<
-          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+  type L3SelectValues<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: SelectPropertyTypes<
+          ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
         >
       }
     }
   };
-  type L4SelectValues<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: {
+  type L4SelectValues<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: {
           [n in keyof ObjectProperties<
-            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
-          >]: SelectPropertyTypes<ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]>[n]>
+            ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
+          >]: SelectPropertyTypes<
+            ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]>[n]
+          >
         }
       }
     }
   };
 
   // extract (for  4 levels) all reducer() state shapes from a Model
-  type L0ReducerShapes<T> = ReducerStateShapes<T>;
-  type L1ReducerShapes<T> = { [k in keyof ObjectProperties<T>]: ReducerStateShapes<ObjectProperties<T>[k]> };
-  type L2ReducerShapes<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: ReducerStateShapes<
-        ObjectProperties<ObjectProperties<T>[k]>[l]
+  type L0ReducerShapes<Model> = ReducerStateShapes<Model>;
+  type L1ReducerShapes<Model> = {
+    [k in keyof ObjectProperties<Model>]: ReducerStateShapes<ObjectProperties<Model>[k]>
+  };
+  type L2ReducerShapes<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: ReducerStateShapes<
+        ObjectProperties<ObjectProperties<Model>[k]>[l]
       >
     }
   };
-  type L3ReducerShapes<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: ReducerStateShapes<
-          ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
+  type L3ReducerShapes<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: ReducerStateShapes<
+          ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
         >
       }
     }
   };
-  type L4ReducerShapes<T> = {
-    [k in keyof ObjectProperties<T>]: {
-      [l in keyof ObjectProperties<ObjectProperties<T>[k]>]: {
-        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>]: {
+  type L4ReducerShapes<Model> = {
+    [k in keyof ObjectProperties<Model>]: {
+      [l in keyof ObjectProperties<ObjectProperties<Model>[k]>]: {
+        [m in keyof ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>]: {
           [n in keyof ObjectProperties<
-            ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]
-          >]: ReducerStateShapes<ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<T>[k]>[l]>[m]>[n]>
+            ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]
+          >]: ReducerStateShapes<
+            ObjectProperties<ObjectProperties<ObjectProperties<ObjectProperties<Model>[k]>[l]>[m]>[n]
+          >
         }
       }
     }
   };
 
-  type MutableModelValues<T> = L0Values<T> & L1Values<T> & L2Values<T> & L3Values<T> & L4Values<T>;
-  type ModelActions<T> = L0Actions<T> & L1Actions<T> & L2Actions<T> & L3Actions<T> & L4Actions<T>;
-  type SelectValues<T> = L0SelectValues<T> &
-    L1SelectValues<T> &
-    L2SelectValues<T> &
-    L3SelectValues<T> &
-    L4SelectValues<T>;
-  type ReducerShapes<T> = L0ReducerShapes<T> &
-    L1ReducerShapes<T> &
-    L2ReducerShapes<T> &
-    L3ReducerShapes<T> &
-    L4ReducerShapes<T>;
-  type ModelValues<T> = MutableModelValues<T> & SelectValues<T> & ReducerShapes<T>;
+  type SelectValues<Model> = L0SelectValues<Model> &
+    L1SelectValues<Model> &
+    L2SelectValues<Model> &
+    L3SelectValues<Model> &
+    L4SelectValues<Model>;
+  type ReducerShapes<Model> = L0ReducerShapes<Model> &
+    L1ReducerShapes<Model> &
+    L2ReducerShapes<Model> &
+    L3ReducerShapes<Model> &
+    L4ReducerShapes<Model>;
+  type ReduxDispatch<A extends Redux.Action> = (action: Redux.Action<A>) => Redux.Action<A>;
+
+  // given an easy-peasy Model, extract just the actions
+  type ModelActions<Model> = L0Actions<Model> &
+    L1Actions<Model> &
+    L2Actions<Model> &
+    L3Actions<Model> &
+    L4Actions<Model>;
+
+  // given an easy-peasy Model, extract just the state values, minus reducers and select(...)s
+  type MutableModelValues<Model> = L0Values<Model> &
+    L1Values<Model> &
+    L2Values<Model> &
+    L3Values<Model> &
+    L4Values<Model>;
+
+  // given an easy-peasy Model, extract just the state values
+  type ModelValues<Model> = MutableModelValues<Model> & SelectValues<Model> & ReducerShapes<Model>;
 
   // easy-peasy's decorated Redux dispatch() (e.g. dispatch.todos.insert(item); )
-  type ReduxDispatch<A> = (action: Redux.Action<A>) => Redux.Action<A>;
-  type Dispatch<Model, A = any> = ModelActions<Model> & ReduxDispatch<A>;
+  type Dispatch<Model, A extends Redux.Action = Redux.Action<any>> = ModelActions<Model> & Redux.Dispatch<A>;
 
   /**
    * https://github.com/ctrlplusb/easy-peasy#createstoremodel-config
@@ -358,9 +389,9 @@ declare module 'easy-peasy' {
    *
    * Example usage:
    *
-   * const todos = useStore<Model, Array<string>>(state => state.todos.items);
+   * const todos = useStore((state: ModelValues<Model>) => state.todos.items);
    *
-   * const { totalPrice, netPrice } = useStore<Model, { totalPrice: number; netPrice: number; }>(state => ({
+   * const { totalPrice, netPrice } = useStore((state: ModelValues<Model>) => ({
    *   totalPrice: state.basket.totalPrice,
    *   netPrice: state.basket.netPrice
    * }));
@@ -376,12 +407,9 @@ declare module 'easy-peasy' {
    *
    * Example usage:
    *
-   * const addTodo = useAction<Model, string>(dispatch => dispatch.todos.add);
+   * const addTodo = useAction((dispatch: Dispatch<Model>) => dispatch.todos.add);
    *
-   * const { saveTodo, removeTodo } = useAction<Model, {
-   *   saveTodo: (todo: string) => void;
-   *   removeTodo: (todo: string) => void;
-   * }>(dispatch => ({
+   * const { saveTodo, removeTodo } = useAction((dispatch: Dispatch<Model>) => ({
    *   saveTodo: dispatch.todos.save,
    *   removeTodo: dispatch.todo.toggle
    * }));
