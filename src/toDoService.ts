@@ -10,7 +10,7 @@ const todoService = {
 
   reportBigUsage: async () => {
     await delay(50);
-  }
+  },
 };
 
 export default todoService;

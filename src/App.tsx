@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { StoreProvider } from "easy-peasy";
+import React, { Component } from 'react';
+import { StoreProvider } from 'easy-peasy';
 
-import store from "./store";
-import ToDoComponent from "./ToDoComponent";
-import FormulaComponent from "./FormulaComponent";
-import logo from "./assets/peas.png";
-import "./assets/App.css";
+import store from './store';
+import ToDoComponent from './ToDoComponent';
+import FormulaComponent from './FormulaComponent';
+import logo from './assets/peas.png';
+import './assets/App.css';
 
 function App() {
   return (

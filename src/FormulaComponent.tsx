@@ -1,6 +1,6 @@
-import React from "react";
-import { StoreProvider, useAction, useStore } from "easy-peasy";
-import { Store } from "./formula";
+import React from 'react';
+import { StoreProvider, useAction, useStore } from 'easy-peasy';
+import { Store } from './formula';
 
 type ActFunction = (acting: { id: string }) => void;
 
@@ -15,7 +15,7 @@ function UsesFormula() {
       <button
         type="button"
         onClick={() => {
-          act({ id: "id" });
+          act({ id: 'id' });
         }}
       >
         Login

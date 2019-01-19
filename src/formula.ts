@@ -1,14 +1,7 @@
-import {
-  select,
-  effect,
-  createStore,
-  Select,
-  Effect,
-  Action
-} from "easy-peasy";
-import { delay } from "./toDoService";
-import { Param1, Overwrite, Omit } from "type-zoo";
-import Redux from "redux";
+import { select, effect, createStore, Select, Effect, Action } from 'easy-peasy';
+import { delay } from './toDoService';
+import { Param1, Overwrite, Omit } from 'type-zoo';
+import Redux from 'redux';
 
 interface ClientType {
   id: number;
@@ -53,10 +46,10 @@ interface ModelShape {
 
   user: User;
 
-  clients: ClientType[];
+  clients: Array<ClientType>;
   selectedClient: {
     id: number;
-    sites: SiteType[];
+    sites: Array<SiteType>;
   };
 
   deep1: {
@@ -92,9 +85,9 @@ async function login(credentials: LoginCredentials): Promise<LoginResponse> {
   return {
     ok: true,
     isError: false,
-    id: "id",
-    userName: "username",
-    name: "name"
+    id: 'id',
+    userName: 'username',
+    name: 'name',
   };
 }
 
@@ -104,19 +97,19 @@ function clearLoginData() {
 
 export const Store = createStore<Model>({
   ready: false,
-  logoBaseUrl: "",
+  logoBaseUrl: '',
 
   user: {
     id: 0,
-    name: "",
-    email: "",
-    permissions: {}
+    name: '',
+    email: '',
+    permissions: {},
   },
 
   clients: [],
   selectedClient: {
     id: 0,
-    sites: []
+    sites: [],
   },
 
   deep1: {
@@ -124,8 +117,8 @@ export const Store = createStore<Model>({
       deepValue: false,
       toggle: (state: DeepShape) => {
         state.deepValue = !state.deepValue;
-      }
-    }
+      },
+    },
   },
 
   isAuthenticated: select(s => !!s.user.id),
@@ -139,17 +132,18 @@ export const Store = createStore<Model>({
       ...state,
       clients: [],
       selectedClient: { id: 0, sites: [] },
-      user: { id: 0, name: "", email: "", permissions: {} }
+      user: { id: 0, name: '', email: '', permissions: {} },
     };
   },
 
   _handleLogin: (state: ModelShape, p: LoginResponse) => {
     if (p.isError) {
+      // empty
     } else {
       // Update state
       state.user.email = p.userName;
       state.user.id = Number(p.id);
       state.user.name = p.name;
     }
-  }
+  },
 });

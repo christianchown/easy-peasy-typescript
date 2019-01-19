@@ -1,18 +1,16 @@
-import {
-  createStore,
-  effect,
-  reducer,
-  select,
-  Action,
-  Effect,
-  Reducer,
-  Select
-} from "easy-peasy";
-import { Action as ReduxAction } from "redux";
-import todoService from "./toDoService";
+import { createStore, effect, reducer, select, Action, Effect, Reducer, Select } from 'easy-peasy';
+import { Action as ReduxAction } from 'redux';
+import todoService from './toDoService';
+
+interface TodoDeeperValues {
+  deeperValue: number;
+}
 
 interface TodoValues {
   items: Array<string>;
+  deep: {
+    deeper: TodoDeeperValues;
+  };
 }
 
 interface TodoValuesAndSelectors extends TodoValues {
@@ -20,9 +18,14 @@ interface TodoValuesAndSelectors extends TodoValues {
 }
 
 interface TodoActions {
-  saveTodo: Effect<Model, string, Promise<number>>;
+  saveTodo: Effect<Model, string, number>;
   todoSaved: Action<TodoValuesAndSelectors, string>;
   lengthOfItems: Select<TodoValuesAndSelectors, number>;
+  deep: {
+    deeper: {
+      incrementDeeperValue: Action<TodoDeeperValues>;
+    };
+  };
 }
 
 export interface Model {
@@ -64,18 +67,27 @@ const store = createStore<Model>({
 
     lengthOfItems: select(state => {
       return state.items.length; // 👍 correctly typed
-    })
+    }),
+
+    deep: {
+      deeper: {
+        deeperValue: 1,
+        incrementDeeperValue(state: TodoDeeperValues) {
+          state.deeperValue += 1;
+        },
+      },
+    },
   },
 
   counter: reducer((state, action: ReduxAction) => {
     // 👍 correctly typed
     switch (action.type) {
-      case "INCREMENT":
+      case 'INCREMENT':
         return state + 1;
       default:
         return state || 0;
     }
-  })
+  }),
 });
 
 export default store;
