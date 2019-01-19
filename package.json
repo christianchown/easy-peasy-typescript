@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "easy-peasy": "^1.6.1",
+    "easy-peasy": "^1.7.1",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2"
   },
@@ -12,8 +12,14 @@
     "@types/node": "^10.12.11",
     "@types/react": "^16.7.10",
     "@types/react-dom": "^16.0.11",
+    "prettier": "^1.15.3",
     "react-scripts": "2.1.1",
     "rimraf": "^2.6.2",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^3.6.0",
     "type-zoo": "^3.2.1",
     "typescript": "^3.2.1"
   },
@@ -21,7 +27,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "ts": "tsc --noEmit --pretty --p tsconfig.json",
+    "lint": "tslint -c tslint.json src/**/*.{ts,tsx} --fix --format verbose"
   },
   "eslintConfig": {
     "extends": "react-app"
