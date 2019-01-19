@@ -78,7 +78,7 @@ interface ModelActionShape {
   _handleLogin: Action<ModelShape & ModelSelector, LoginResponse>;
 }
 
-type Model = ModelShape & ModelActionShape;
+export type Model = ModelShape & ModelActionShape;
 
 async function login(credentials: LoginCredentials): Promise<LoginResponse> {
   await delay(100);
