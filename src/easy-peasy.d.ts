@@ -1,6 +1,7 @@
 declare module 'easy-peasy' {
+  import * as React from 'react';
+  import * as Redux from 'redux';
   import { Param1, Overwrite, Omit } from 'type-zoo';
-  import Redux from 'redux';
 
   // conditional types from https://www.typescriptlang.org/docs/handbook/advanced-types.html#example-1
   type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
